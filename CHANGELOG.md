@@ -9,7 +9,28 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.
 ## 2025-11-01
 
 ### Agregado
-- **Generación de código CRUD con SQLC** (3e65f7c)
+- **Pruebas unitarias para operaciones CRUD** (e5e4084)
+  - Suite de tests completa para operaciones CRUD de cuentas en `db/sqlc/account_test.go`:
+    - `TestCreateAccount`: verifica creación de cuentas con datos válidos
+    - `TestGetAccount`: valida obtención de cuenta por ID
+    - `TestUpdateAccount`: prueba actualización de balance
+    - `TestListAccounts`: verifica paginación con LIMIT/OFFSET
+    - `TestDeleteAccount`: comprueba eliminación de cuentas
+  - Archivo `main_test.go` con configuración de test suite:
+    - Setup de conexión a PostgreSQL para tests
+    - Variable global `testQueries` para reutilizar en todos los tests
+    - Constantes de configuración (dbDriver, dbSource)
+  - Paquete de utilidades `util/random.go` para generación de datos de prueba:
+    - `RandomOwner()`: genera nombres aleatorios de 6 caracteres
+    - `RandomMoney()`: genera balances entre 0 y 1000
+    - `RandomCurrency()`: selecciona aleatoriamente entre USD, EUR, ARS
+    - `RandomInt()` y `RandomString()`: funciones auxiliares
+  - Dependencias agregadas a `go.mod`:
+    - `github.com/stretchr/testify v1.11.1`: framework de assertions
+    - `github.com/lib/pq v1.10.9`: driver PostgreSQL
+  - Comando `make test` agregado al Makefile para ejecutar tests con cobertura
+
+- **Generación de código CRUD con SQLC** (1b3de07)
   - Configuración de SQLC para generación automática de código Go desde queries SQL
   - Archivo `sqlc.yaml` con configuración para PostgreSQL apuntando a `db/migration` (schema) y `db/query` (queries)
   - Queries SQL definidas para operaciones CRUD de la tabla `accounts`:
