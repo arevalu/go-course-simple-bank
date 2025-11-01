@@ -9,41 +9,14 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.
 ## 2025-11-01
 
 ### Agregado
-- **Pruebas unitarias para operaciones CRUD** (e5e4084)
-  - Suite de tests completa para operaciones CRUD de cuentas en `db/sqlc/account_test.go`:
-    - `TestCreateAccount`: verifica creación de cuentas con datos válidos
-    - `TestGetAccount`: valida obtención de cuenta por ID
-    - `TestUpdateAccount`: prueba actualización de balance
-    - `TestListAccounts`: verifica paginación con LIMIT/OFFSET
-    - `TestDeleteAccount`: comprueba eliminación de cuentas
-  - Archivo `main_test.go` con configuración de test suite:
-    - Setup de conexión a PostgreSQL para tests
-    - Variable global `testQueries` para reutilizar en todos los tests
-    - Constantes de configuración (dbDriver, dbSource)
-  - Paquete de utilidades `util/random.go` para generación de datos de prueba:
-    - `RandomOwner()`: genera nombres aleatorios de 6 caracteres
-    - `RandomMoney()`: genera balances entre 0 y 1000
-    - `RandomCurrency()`: selecciona aleatoriamente entre USD, EUR, ARS
-    - `RandomInt()` y `RandomString()`: funciones auxiliares
-  - Dependencias agregadas a `go.mod`:
-    - `github.com/stretchr/testify v1.11.1`: framework de assertions
-    - `github.com/lib/pq v1.10.9`: driver PostgreSQL
-  - Comando `make test` agregado al Makefile para ejecutar tests con cobertura
+- **Sistema de transacciones CRUD para entries y transfers** (255ca07)
+  Implementación completa del sistema de transacciones bancarias con generación automática de código CRUD vía SQLC para las entidades `entries` y `transfers`. Incluye queries SQL para creación, consulta y listado de movimientos contables y transferencias, junto con el patrón Store que encapsula operaciones transaccionales mediante `TransferTx`, garantizando consistencia ACID en transferencias entre cuentas con creación automática de entries de débito y crédito.
+
+- **Pruebas unitarias para operaciones CRUD** (a2a8490)
+  Suite completa de tests unitarios para validar operaciones CRUD de cuentas bancarias, implementando helpers de generación de datos aleatorios para testing y configuración de ambiente de pruebas con PostgreSQL. Integración de dependencias `testify` para assertions y `lib/pq` como driver de base de datos, con comando `make test` para ejecución automatizada de tests con cobertura.
 
 - **Generación de código CRUD con SQLC** (1b3de07)
-  - Configuración de SQLC para generación automática de código Go desde queries SQL
-  - Archivo `sqlc.yaml` con configuración para PostgreSQL apuntando a `db/migration` (schema) y `db/query` (queries)
-  - Queries SQL definidas para operaciones CRUD de la tabla `accounts`:
-    - `CreateAccount`: inserta nueva cuenta con owner, balance y currency
-    - `GetAccount`: obtiene cuenta por ID
-    - `ListAccounts`: lista cuentas con paginación (LIMIT/OFFSET)
-    - `UpdateAccount`: actualiza balance de cuenta por ID
-    - `DeleteAccount`: elimina cuenta por ID
-  - Código Go generado en `db/sqlc/`:
-    - `account.sql.go`: implementación de las 5 operaciones CRUD tipadas
-    - `db.go`: interfaz DBTX y struct Queries para ejecutar queries
-    - `models.go`: modelo Go de la estructura Account con tags JSON
-  - Comando `make sqlc` agregado al Makefile para regenerar código
+  Integración de SQLC como generador automático de código Go type-safe a partir de queries SQL, implementando el patrón de acceso a datos para la entidad `accounts` con operaciones CRUD completas (Create, Get, List con paginación, Update, Delete). Generación de modelos Go con serialización JSON y abstracción de interfaz `DBTX` para soportar tanto conexiones directas como transacciones.
 
 ---
 
